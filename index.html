@@ -91,7 +91,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin: 8px 0 4px;
+      margin: 8px 0 0;
     }
 
     button {
@@ -116,12 +116,6 @@
     }
 
     button:hover { opacity: 0.9; }
-
-    .note {
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 3px;
-    }
 
     #rulesBox {
       display: none;
@@ -153,7 +147,7 @@
     .counter-number {
       font-size: 24px;
       font-weight: bold;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     @media (max-width: 700px) {
@@ -167,22 +161,18 @@
   <main class="wrap">
     <h1>Engraving Tools Dashboard</h1>
 
-    <!-- GPS CLEANER -->
     <section class="tool">
       <h2>GPS Coordinates</h2>
-
       <div class="grid">
         <div>
           <label for="gpsInput">Input</label>
-          <textarea id="gpsInput" placeholder=""></textarea>
+          <textarea id="gpsInput"></textarea>
         </div>
-
         <div>
           <label for="gpsOutput">Output</label>
-          <textarea id="gpsOutput" placeholder=""></textarea>
+          <textarea id="gpsOutput"></textarea>
         </div>
       </div>
-
       <div class="buttons">
         <button onclick="copyText('gpsOutput')">Copy</button>
         <button onclick="formatGPS()">Format</button>
@@ -191,19 +181,16 @@
       </div>
     </section>
 
-    <!-- SYMBOL CONVERTER -->
     <section class="tool">
       <h2>•♥†♥†• SYMBOLS •♥†♥†•</h2>
-
       <div class="grid">
         <div>
           <label for="symbolInput">Input</label>
-          <textarea id="symbolInput" placeholder=""></textarea>
+          <textarea id="symbolInput"></textarea>
         </div>
-
         <div>
           <label for="symbolOutput">Output</label>
-          <textarea id="symbolOutput" placeholder=""></textarea>
+          <textarea id="symbolOutput"></textarea>
         </div>
       </div>
 
@@ -220,45 +207,32 @@
         <button class="secondary" onclick="clearSymbolConverter()">Clear</button>
         <button class="secondary" onclick="addRule()">+ Add Rule</button>
       </div>
-
-      <div class="note"></div>
     </section>
 
-    <!-- ORDER CLEANER -->
     <section class="tool large">
       <h2>Order Details Cleaner</h2>
-
       <div class="grid">
         <div>
           <label for="orderInput">Input</label>
-          <textarea id="orderInput" placeholder=""></textarea>
+          <textarea id="orderInput"></textarea>
         </div>
-
         <div>
           <label for="orderOutput">Output</label>
-          <textarea id="orderOutput" placeholder=""></textarea>
+          <textarea id="orderOutput"></textarea>
         </div>
       </div>
-
       <div class="buttons">
         <button onclick="copyText('orderOutput')">Copy</button>
         <button onclick="cleanOrder()">Format</button>
         <button class="secondary" onclick="clearFields('orderInput', 'orderOutput')">Clear</button>
       </div>
-
-      <div class="note"></div>
     </section>
 
-    <!-- CHARACTER COUNTER -->
     <section class="tool">
       <h2>Character Counter</h2>
-
       <label for="counterInput">Input</label>
-      <textarea id="counterInput" placeholder="" oninput="countCharactersNoSpaces()"></textarea>
-
+      <textarea id="counterInput" oninput="countCharactersNoSpaces()"></textarea>
       <div class="counter-number" id="charCount">0</div>
-      <div class="note">Characters counted without spaces.</div>
-
       <div class="buttons">
         <button class="secondary" onclick="clearCounter()">Clear</button>
       </div>
@@ -268,8 +242,8 @@
   <script>
     function copyText(id) {
       const box = document.getElementById(id);
+      box.focus();
       box.select();
-      box.setSelectionRange(0, 99999);
       document.execCommand('copy');
     }
 
@@ -353,9 +327,9 @@
 
       row.innerHTML = `
         <span>Replace</span>
-        <input type="text" class="findText" placeholder="Find" />
+        <input type="text" class="findText" />
         <span>with</span>
-        <input type="text" class="replaceText" placeholder="Replace" />
+        <input type="text" class="replaceText" />
         <button class="small secondary" onclick="removeRule(this)">✕</button>
       `;
 
@@ -384,8 +358,7 @@
     }
 
     function replaceAllSafe(text, findStr, replaceStr) {
-      const escaped = escapeRegex(findStr);
-      return text.replace(new RegExp(escaped, 'g'), replaceStr);
+      return text.replace(new RegExp(escapeRegex(findStr), 'g'), replaceStr);
     }
 
     function capitalizeEachWord(text) {
@@ -399,12 +372,9 @@
         text = replaceAllSafe(text, rule[0], rule[1]);
       });
 
-      const rows = document.querySelectorAll('#rulesBox .rules-row');
-
-      rows.forEach(row => {
+      document.querySelectorAll('#rulesBox .rules-row').forEach(row => {
         const find = row.querySelector('.findText').value;
         const replace = row.querySelector('.replaceText').value;
-
         if (find !== '') {
           text = replaceAllSafe(text, find, replace);
         }
@@ -432,8 +402,7 @@
 
     function countCharactersNoSpaces() {
       const text = document.getElementById('counterInput').value;
-      const count = text.replace(/\s/g, '').length;
-      document.getElementById('charCount').textContent = count;
+      document.getElementById('charCount').textContent = text.replace(/\s/g, '').length;
     }
 
     function clearCounter() {
