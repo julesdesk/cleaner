@@ -6,151 +6,157 @@
   <title>Engraving Tools Dashboard</title>
   <style>
     :root {
-      --bg:#f5f2ed; --card:#fff; --text:#222; --muted:#666;
-      --border:#d7d0c6; --button:#222; --button-secondary:#777;
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --button: #111827;
+      --button-secondary: #6b7280;
     }
 
-    * { box-sizing:border-box; }
+    * { box-sizing: border-box; }
 
     body {
-      margin:0;
-      padding:14px;
-      font-family:Arial, Helvetica, sans-serif;
-      background:var(--bg);
-      color:var(--text);
+      margin: 0;
+      padding: 14px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
 
     .wrap {
-      max-width:600px;
-      margin:0 auto;
+      max-width: 1050px;
+      margin: 0 auto;
     }
 
     h1 {
-      margin:0 0 10px;
-      font-size:24px;
-      letter-spacing:-0.4px;
+      margin: 0 0 10px;
+      font-size: 24px;
+      letter-spacing: -0.4px;
     }
 
     h2 {
-      margin:0 0 8px;
-      font-size:17px;
+      margin: 0 0 8px;
+      font-size: 17px;
     }
 
     .tool {
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:12px;
-      margin-bottom:10px;
-      box-shadow:0 3px 10px rgba(0,0,0,.05);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 6px 20px rgba(17, 24, 39, 0.05);
     }
 
     .grid {
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     label {
-      display:block;
-      margin-bottom:4px;
-      font-weight:bold;
-      font-size:12px;
+      display: block;
+      margin-bottom: 3px;
+      font-weight: bold;
+      font-size: 12px;
     }
 
     textarea,
     input[type="text"] {
-      width:100%;
-      border:1px solid var(--border);
-      border-radius:8px;
-      padding:8px;
-      font-size:13px;
-      line-height:1.3;
-      background:#fff;
-      color:var(--text);
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 13px;
+      line-height: 1.35;
+      background: #fff;
+      color: var(--text);
     }
 
     textarea {
-      min-height:55px;
-      resize:vertical;
-      white-space:pre-wrap;
+      min-height: 55px;
+      resize: vertical;
+      white-space: pre-wrap;
     }
 
     .large textarea {
-      min-height:90px;
+      min-height: 90px;
     }
 
     .buttons {
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin:8px 0 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 4px;
     }
 
     button {
-      border:none;
-      border-radius:7px;
-      padding:7px 11px;
-      font-size:12px;
-      cursor:pointer;
-      background:var(--button);
-      color:#fff;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 12px;
+      cursor: pointer;
+      background: var(--button);
+      color: #fff;
     }
 
     button.secondary {
-      background:var(--button-secondary);
+      background: #f3f4f6;
+      color: var(--text);
+      border-color: var(--border);
     }
 
     button.small {
-      padding:5px 8px;
-      font-size:11px;
+      padding: 5px 8px;
+      font-size: 11px;
     }
 
-    button:hover { opacity:.9; }
+    button:hover { opacity: 0.9; }
 
     .note {
-      color:var(--muted);
-      font-size:11px;
-      margin-top:3px;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 3px;
     }
 
     #rulesBox {
-      display:none;
-      margin-top:6px;
+      display: none;
+      margin-top: 6px;
     }
 
     .rules-row {
-      display:grid;
-      grid-template-columns:auto 1fr auto 1fr auto;
-      gap:5px;
-      margin-bottom:5px;
-      align-items:center;
-      font-size:11px;
+      display: grid;
+      grid-template-columns: auto 1fr auto 1fr auto;
+      gap: 5px;
+      margin-bottom: 5px;
+      align-items: center;
+      font-size: 11px;
     }
 
     .rules-row input {
-      padding:5px;
-      font-size:11px;
+      padding: 5px;
+      font-size: 11px;
     }
 
     .checks {
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      font-size:12px;
-      margin:4px 0 2px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      margin: 4px 0 2px;
     }
 
     .counter-number {
-      font-size:24px;
-      font-weight:bold;
-      margin-top:2px;
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 2px;
     }
 
-    @media (max-width:780px) {
-      body { padding:10px; }
-      .grid,
-      .rules-row { grid-template-columns:1fr; }
+    @media (max-width: 780px) {
+      body { padding: 10px; }
+      .rules-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -159,7 +165,6 @@
   <main class="wrap">
     <h1>Engraving Tools Dashboard</h1>
 
-    <!-- ORDER CLEANER -->
     <section class="tool large">
       <h2>Order Details Cleaner</h2>
       <div class="grid">
@@ -180,7 +185,6 @@
       <div class="note">Removes everything before the first colon. Empty fields are skipped.</div>
     </section>
 
-    <!-- GPS CLEANER -->
     <section class="tool">
       <h2>GPS Coordinate Cleaner</h2>
       <div class="grid">
@@ -201,7 +205,6 @@
       </div>
     </section>
 
-    <!-- SYMBOL CONVERTER -->
     <section class="tool">
       <h2>Symbol Converter</h2>
       <div class="grid">
@@ -232,7 +235,6 @@
       <div class="note">Default rules run automatically in the background. Click + Add Rule only if you need a custom rule.</div>
     </section>
 
-    <!-- CHARACTER COUNTER -->
     <section class="tool">
       <h2>Character Counter</h2>
       <label for="counterInput">Input</label>
@@ -246,7 +248,6 @@
   </main>
 
   <script>
-    // ---------- SHARED HELPERS ----------
     function copyText(id) {
       const box = document.getElementById(id);
       box.select();
@@ -259,7 +260,6 @@
       document.getElementById(outputId).value = '';
     }
 
-    // ---------- ORDER DETAILS CLEANER ----------
     function cleanOrder() {
       const input = document.getElementById('orderInput').value;
       const lines = input.split(/\r?\n/);
@@ -293,7 +293,6 @@
       document.getElementById('orderOutput').value = outputLines.join('\n');
     }
 
-    // ---------- GPS CLEANER ----------
     function formatGPS() {
       let text = document.getElementById('gpsInput').value.trim();
 
@@ -314,7 +313,6 @@
       output.value = source.trim().replace(/\s+/g, ' • ');
     }
 
-    // ---------- SYMBOL CONVERTER ----------
     const defaultSymbolRules = [
       ['//', '•'],
       ['/', ' '],
@@ -379,12 +377,10 @@
     function convertSymbols() {
       let text = document.getElementById('symbolInput').value;
 
-      // Hidden default rules run first
       defaultSymbolRules.forEach(rule => {
         text = replaceAllSafe(text, rule[0], rule[1]);
       });
 
-      // Custom visible rules run second
       const rows = document.querySelectorAll('#rulesBox .rules-row');
 
       rows.forEach(row => {
@@ -416,7 +412,6 @@
 
     document.getElementById('symbolInput').addEventListener('input', convertSymbols);
 
-    // ---------- CHARACTER COUNTER ----------
     function countCharactersNoSpaces() {
       const text = document.getElementById('counterInput').value;
       const count = text.replace(/\s/g, '').length;
