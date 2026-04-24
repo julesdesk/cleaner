@@ -55,7 +55,7 @@
       display:block;
       margin-bottom:4px;
       font-weight:bold;
-      font-size:14px;
+      font-size:12px;
     }
 
     textarea,
@@ -71,14 +71,13 @@
     }
 
     textarea {
-      min-height:35px;
+      min-height:55px;
       resize:vertical;
       white-space:pre-wrap;
     }
 
-    
     .large textarea {
-      min-height:40px;
+      min-height:90px;
     }
 
     .buttons {
@@ -115,10 +114,23 @@
       margin-top:3px;
     }
 
+    #rulesBox {
+      display:none;
+      margin-top:6px;
+    }
+
+    .rules-row {
+      display:grid;
+      grid-template-columns:auto 1fr auto 1fr auto;
+      gap:5px;
+      margin-bottom:5px;
+      align-items:center;
+      font-size:11px;
+    }
+
     .rules-row input {
-  padding:5px;
-  font-size:11px;
-}
+      padding:5px;
+      font-size:11px;
     }
 
     .checks {
@@ -147,7 +159,6 @@
   <main class="wrap">
     <h1>Engraving Tools Dashboard</h1>
 
-    <!-- ORDER CLEANER -->
     <section class="tool large">
       <h2>Order Details Cleaner</h2>
       <div class="grid">
@@ -168,7 +179,6 @@
       <div class="note">Removes everything before the first colon. Empty fields are skipped.</div>
     </section>
 
-    <!-- GPS CLEANER -->
     <section class="tool">
       <h2>GPS Coordinate Cleaner</h2>
       <div class="grid">
@@ -189,7 +199,6 @@
       </div>
     </section>
 
-    <!-- SYMBOL CONVERTER -->
     <section class="tool">
       <h2>Symbol Converter</h2>
       <div class="grid">
@@ -203,11 +212,10 @@
         </div>
       </div>
 
-      <label>Rules</label>
       <div id="rulesBox"></div>
 
       <div class="buttons">
-        <button onclick="addRule()">+ Add</button>
+        <button onclick="addRule()">+ Add Rule</button>
         <button onclick="convertSymbols()">Convert</button>
         <button class="secondary" onclick="clearSymbolConverter()">Clear</button>
         <button class="secondary" onclick="copyText('symbolOutput')">Copy</button>
@@ -217,9 +225,9 @@
         <label><input type="checkbox" id="uppercaseOutput" onchange="convertSymbols()" /> Uppercase</label>
         <label><input type="checkbox" id="capitalizeWords" onchange="convertSymbols()" /> Capitalize Words</label>
       </div>
+      <div class="note">Default rules run automatically. Click + Add Rule only when you need to edit or add rules.</div>
     </section>
 
-    <!-- CHARACTER COUNTER -->
     <section class="tool">
       <h2>Character Counter</h2>
       <label for="counterInput">Input</label>
@@ -307,8 +315,15 @@
       ['+', '†']
     ];
 
-    function addRule(findValue = '', replaceValue = '') {
+    function showRules() {
+      document.getElementById('rulesBox').style.display = 'block';
+    }
+
+    function addRule(findValue = '', replaceValue = '', show = true) {
       const rulesBox = document.getElementById('rulesBox');
+
+      if (show) showRules();
+
       const row = document.createElement('div');
       row.className = 'rules-row';
 
@@ -327,17 +342,27 @@
       row.querySelector('.replaceText').addEventListener('input', convertSymbols);
 
       rulesBox.appendChild(row);
+      convertSymbols();
     }
 
     function loadDefaultSymbolRules() {
       const rulesBox = document.getElementById('rulesBox');
       rulesBox.innerHTML = '';
-      defaultSymbolRules.forEach(rule => addRule(rule[0], rule[1]));
+
+      defaultSymbolRules.forEach(rule => addRule(rule[0], rule[1], false));
+
+      // Hide the default rules after loading.
+      rulesBox.style.display = 'none';
     }
 
     function removeRule(button) {
       button.parentElement.remove();
       convertSymbols();
+
+      const rows = document.querySelectorAll('.rules-row');
+      if (rows.length === 0) {
+        document.getElementById('rulesBox').style.display = 'none';
+      }
     }
 
     function escapeRegex(text) {
