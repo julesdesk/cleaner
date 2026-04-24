@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Engraving Tools Dashboard</title>
+
   <style>
     :root {
       --bg: #f6f7fb;
@@ -12,7 +13,7 @@
       --muted: #6b7280;
       --border: #e5e7eb;
       --button: #111827;
-      --button-secondary: #6b7280;
+      --button-secondary: #f3f4f6;
     }
 
     * { box-sizing: border-box; }
@@ -26,14 +27,14 @@
     }
 
     .wrap {
-      max-width: 500px;
+      max-width: 700px;
       margin: 0 auto;
     }
 
     h1 {
       margin: 0 0 10px;
       font-size: 24px;
-      letter-spacing: -0.4px;
+      text-align: center;
     }
 
     h2 {
@@ -42,11 +43,12 @@
     }
 
     .tool {
+      max-width: 600px;
+      margin: 0 auto 10px;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px;
-      margin-bottom: 10px;
       box-shadow: 0 6px 20px rgba(17, 24, 39, 0.05);
     }
 
@@ -73,11 +75,11 @@
       line-height: 1.35;
       background: #fff;
       color: var(--text);
+      resize: vertical;
     }
 
     textarea {
-      min-height: 55px;
-      resize: vertical;
+      min-height: 60px;
       white-space: pre-wrap;
     }
 
@@ -103,7 +105,7 @@
     }
 
     button.secondary {
-      background: #f3f4f6;
+      background: var(--button-secondary);
       color: var(--text);
       border-color: var(--border);
     }
@@ -154,7 +156,7 @@
       margin-top: 2px;
     }
 
-    @media (max-width: 780px) {
+    @media (max-width: 700px) {
       body { padding: 10px; }
       .rules-row { grid-template-columns: 1fr; }
     }
@@ -165,86 +167,98 @@
   <main class="wrap">
     <h1>Engraving Tools Dashboard</h1>
 
-
-
+    <!-- GPS CLEANER -->
     <section class="tool">
-      <h2>GPS Coordinate Cleaner N20°W20°</h2>
+      <h2>GPS Coordinates</h2>
+
       <div class="grid">
         <div>
-          <label for="gpsInput"></label>
+          <label for="gpsInput">Input</label>
           <textarea id="gpsInput" placeholder=""></textarea>
         </div>
+
         <div>
-          <label for="gpsOutput"></label>
+          <label for="gpsOutput">Output</label>
           <textarea id="gpsOutput" placeholder=""></textarea>
         </div>
       </div>
+
       <div class="buttons">
-        <button class="secondary" onclick="copyText('gpsOutput')">COPY</button>
-        <button onclick="formatGPS()">FORMAT</button>
-        <button class="secondary" onclick="clearFields('gpsInput', 'gpsOutput')">CLEAR</button>
+        <button onclick="copyText('gpsOutput')">Copy</button>
+        <button onclick="formatGPS()">Format</button>
+        <button class="secondary" onclick="clearFields('gpsInput', 'gpsOutput')">Clear</button>
         <button class="secondary" onclick="addDotsToGPS()">Add dots (•)</button>
-        
       </div>
     </section>
 
+    <!-- SYMBOL CONVERTER -->
     <section class="tool">
-      <h2>•♥†♥†•SYMBOLS•♥†♥†•</h2>
+      <h2>•♥†♥†• SYMBOLS •♥†♥†•</h2>
+
       <div class="grid">
         <div>
-          <label for="symbolInput"></label>
+          <label for="symbolInput">Input</label>
           <textarea id="symbolInput" placeholder=""></textarea>
         </div>
+
         <div>
-          <label for="symbolOutput"></label>
+          <label for="symbolOutput">Output</label>
           <textarea id="symbolOutput" placeholder=""></textarea>
         </div>
       </div>
 
       <div id="rulesBox"></div>
-  <div class="checks">
+
+      <div class="checks">
         <label><input type="checkbox" id="uppercaseOutput" onchange="convertSymbols()" /> Uppercase</label>
         <label><input type="checkbox" id="capitalizeWords" onchange="convertSymbols()" /> Capitalize Words</label>
       </div>
-      
-      <div class="buttons">
-        <button class="secondary" onclick="copyText('symbolOutput')">COPY</button>
-        <button onclick="convertSymbols()">FORMAT</button>
-        <button class="secondary" onclick="clearSymbolConverter()">CLEAR</button>
-    
-      </div>
 
-    
+      <div class="buttons">
+        <button onclick="copyText('symbolOutput')">Copy</button>
+        <button onclick="convertSymbols()">Format</button>
+        <button class="secondary" onclick="clearSymbolConverter()">Clear</button>
+        <button class="secondary" onclick="addRule()">+ Add Rule</button>
+      </div>
 
       <div class="note"></div>
     </section>
 
-<section class="tool large">
+    <!-- ORDER CLEANER -->
+    <section class="tool large">
       <h2>Order Details Cleaner</h2>
+
       <div class="grid">
         <div>
-          <label for="orderInput"></label>
+          <label for="orderInput">Input</label>
           <textarea id="orderInput" placeholder=""></textarea>
         </div>
+
         <div>
-          <label for="orderOutput"></label>
+          <label for="orderOutput">Output</label>
           <textarea id="orderOutput" placeholder=""></textarea>
         </div>
       </div>
+
       <div class="buttons">
-        <button class="secondary" onclick="copyText('orderOutput')">COPY</button>
-        <button onclick="cleanOrder()">FORMAT</button>
-        <button class="secondary" onclick="clearFields('orderInput', 'orderOutput')">CLEAR</button>
+        <button onclick="copyText('orderOutput')">Copy</button>
+        <button onclick="cleanOrder()">Format</button>
+        <button class="secondary" onclick="clearFields('orderInput', 'orderOutput')">Clear</button>
       </div>
+
       <div class="note"></div>
     </section>
-    
+
+    <!-- CHARACTER COUNTER -->
     <section class="tool">
       <h2>Character Counter</h2>
+
       <label for="counterInput">Input</label>
       <textarea id="counterInput" placeholder="" oninput="countCharactersNoSpaces()"></textarea>
+
       <div class="counter-number" id="charCount">0</div>
       <div class="note">Characters counted without spaces.</div>
+
       <div class="buttons">
         <button class="secondary" onclick="clearCounter()">Clear</button>
       </div>
