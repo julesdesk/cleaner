@@ -87,11 +87,13 @@
       min-height: 90px;
     }
 
-    .buttons {
+    .buttons,
+    .row {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       margin: 8px 0 0;
+      align-items: center;
     }
 
     button {
@@ -115,26 +117,8 @@
       font-size: 11px;
     }
 
-    #rulesBox {
-      display: none;
-      margin-top: 6px;
-    }
-
-    .rules-row {
-      display: grid;
-      grid-template-columns: auto 1fr auto 1fr auto;
-      gap: 5px;
-      margin-bottom: 5px;
-      align-items: center;
-      font-size: 11px;
-    }
-
-    .rules-row input {
-      padding: 5px;
-      font-size: 11px;
-    }
-
-    .checks {
+    .checks,
+    .options {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
@@ -146,6 +130,24 @@
       font-size: 24px;
       font-weight: bold;
       margin-top: 4px;
+    }
+
+    #sym_rules {
+      display: none;
+    }
+
+    .mapping {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 5px;
+      font-size: 11px;
+    }
+
+    .mapping input {
+      width: 95px;
+      padding: 5px;
+      font-size: 11px;
     }
   </style>
 </head>
@@ -176,29 +178,31 @@
 
     <section class="tool">
       <h2>•♥†♥†• SYMBOLS •♥†♥†•</h2>
+
       <div class="grid">
         <div>
-          <label for="symbolInput">Input</label>
-          <textarea id="symbolInput"></textarea>
+          <label for="sym_input">Input</label>
+          <textarea id="sym_input"></textarea>
         </div>
+
         <div>
-          <label for="symbolOutput">Output</label>
-          <textarea id="symbolOutput"></textarea>
+          <label for="sym_output">Output</label>
+          <textarea id="sym_output" readonly></textarea>
         </div>
       </div>
 
-      <div id="rulesBox"></div>
+      <div id="sym_rules"></div>
 
       <div class="checks">
-        <label><input type="checkbox" id="uppercaseOutput" /> Uppercase</label>
-        <label><input type="checkbox" id="capitalizeWords" /> Capitalize Words</label>
+        <label><input type="checkbox" id="sym_uppercase" /> Uppercase</label>
+        <label><input type="checkbox" id="sym_capitalize" /> Capitalize Words</label>
       </div>
 
       <div class="buttons">
-        <button onclick="copyText('symbolOutput')">Copy</button>
-        <button onclick="convertSymbols()">Format</button>
-        <button class="secondary" onclick="clearSymbolConverter()">Clear</button>
-        <button class="secondary" onclick="addRule()">+ Add Rule</button>
+        <button id="sym_copy">Copy</button>
+        <button id="sym_convert">Format</button>
+        <button class="secondary" id="sym_clear">Clear</button>
+        <button class="secondary" id="sym_add">+ Add Rule</button>
       </div>
     </section>
 
@@ -308,138 +312,99 @@
       const parts = source.match(/[^NSEW]*[NSEW]/gi);
 
       if (parts && parts.length) {
-        document.getElementById('gpsOutput').value = parts
-          .map(part => part.trim())
-          .join(' • ') + ' •';
+        document.getElementById('gpsOutput').value = parts.map(part => part.trim()).join(' • ') + ' •';
       } else {
         document.getElementById('gpsOutput').value = source;
       }
     }
 
-    const defaultSymbolRules = [
-      ['//', ' • '],
-      [' . ', ' • '],
-      ['.', ' • '],
-      [' - ', ' • '],
-      ['-', ' • '],
-      ['*', ' • '],
-      ['<3', '♥'],
-      ['+', '†'],
-      [' / ', ' '],
-      ['/', ' ']
-    ];
+    const symRulesEl = document.getElementById('sym_rules');
+    const symInputEl = document.getElementById('sym_input');
+    const symOutputEl = document.getElementById('sym_output');
+    const symConvertBtn = document.getElementById('sym_convert');
+    const symClearBtn = document.getElementById('sym_clear');
+    const symUppercaseEl = document.getElementById('sym_uppercase');
+    const symCapitalizeEl = document.getElementById('sym_capitalize');
+    const symCopyBtn = document.getElementById('sym_copy');
+    const symAddBtn = document.getElementById('sym_add');
 
-    function replaceAllText(text, find, replace) {
-      return text.split(find).join(replace);
-    }
-
-    function cleanSymbolSpacing(text) {
-      return text
-        .replace(/\s+/g, ' ')
-        .replace(/\s*•\s*/g, ' • ')
-        .replace(/\s*♥\s*/g, ' ♥ ')
-        .replace(/\s*†\s*/g, ' † ')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
-
-function convertSymbols() {
-  let text = document.getElementById('symbolInput').value;
-
-  // Numbers like 4-18-26 → 4•18•26
-  text = text.replace(/(\d)-(\d)/g, '$1•$2');
-
-  // Spaced dash between words → word separator
-  text = text.replace(/\s-\s/g, ' • ');
-
-  // Dot separators between words
-  text = text.replace(/\s\.\s/g, ' • ');
-
-  // Other default symbol conversions
-  text = text.replace(/\/\/+/g, ' • ');
-  text = text.replace(/\*/g, ' • ');
-  text = text.replace(/<3/g, '♥');
-  text = text.replace(/\+/g, '†');
-  text = text.replace(/\//g, ' ');
-
-  // Clean spacing, but keep number bullets tight: 4•18•26
-  text = text
-    .replace(/\s+/g, ' ')
-    .replace(/\s*•\s*/g, (match, offset, string) => {
-      const prev = string[offset - 1];
-      const next = string[offset + match.length];
-
-      if (/\d/.test(prev) && /\d/.test(next)) {
-        return '•';
-      }
-
-      return ' • ';
-    })
-    .replace(/\s*♥\s*/g, ' ♥ ')
-    .replace(/\s*†\s*/g, ' † ')
-    .trim();
-
-  // Custom visible rules, if you add any
-  document.querySelectorAll('#rulesBox .rules-row').forEach(row => {
-    const find = row.querySelector('.findText').value;
-    const replace = row.querySelector('.replaceText').value;
-
-    if (find !== '') {
-      text = text.split(find).join(replace);
-    }
-  });
-
-  if (document.getElementById('uppercaseOutput').checked) {
-    text = text.toUpperCase();
-  } else if (document.getElementById('capitalizeWords').checked) {
-    text = text.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
-  }
-
-  document.getElementById('symbolOutput').value = text;
-}
-
-    function addRule(findValue = '', replaceValue = '') {
-      const rulesBox = document.getElementById('rulesBox');
-      rulesBox.style.display = 'block';
-
+    function symAddRule(from = '', to = '', show = true) {
       const row = document.createElement('div');
-      row.className = 'rules-row';
+      row.className = 'mapping';
+      row.innerHTML =
+        `<span>Replace</span>
+         <input type="text" value="${from}" data-role="from" />
+         <span>with</span>
+         <input type="text" value="${to}" data-role="to" />
+         <button class="secondary small" data-role="delete">✕</button>`;
 
-      row.innerHTML = `
-        <span>Replace</span>
-        <input type="text" class="findText" />
-        <span>with</span>
-        <input type="text" class="replaceText" />
-        <button class="small secondary" onclick="removeRule(this)">✕</button>
-      `;
+      row.querySelector('[data-role="delete"]').addEventListener('click', () => {
+        row.remove();
+        symConvert();
+        if (!symRulesEl.querySelector('.mapping')) symRulesEl.style.display = 'none';
+      });
 
-      row.querySelector('.findText').value = findValue;
-      row.querySelector('.replaceText').value = replaceValue;
-
-      row.querySelector('.findText').addEventListener('input', convertSymbols);
-      row.querySelector('.replaceText').addEventListener('input', convertSymbols);
-
-      rulesBox.appendChild(row);
-      convertSymbols();
+      symRulesEl.appendChild(row);
+      if (show) symRulesEl.style.display = 'block';
     }
 
-    function removeRule(button) {
-      button.parentElement.remove();
-      convertSymbols();
+    [['//','•'],['/','  '],['-','•'],['*','•'],['<3','♥'],['+','†']]
+      .forEach(r => symAddRule(r[0], r[1], false));
 
-      if (document.querySelectorAll('#rulesBox .rules-row').length === 0) {
-        document.getElementById('rulesBox').style.display = 'none';
+    function symGetRules() {
+      return [...symRulesEl.querySelectorAll('.mapping')]
+        .map(r => ({
+          from: r.querySelector('[data-role="from"]').value,
+          to: r.querySelector('[data-role="to"]').value
+        }))
+        .filter(x => x.from !== '');
+    }
+
+    function symReplaceAllSafe(text, findStr, replaceStr) {
+      const e = findStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return text.replace(new RegExp(e, 'g'), replaceStr);
+    }
+
+    function symCapitalizeEachWord(str) {
+      return str.replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function symConvert() {
+      let r = symInputEl.value;
+
+      for (const {from, to} of symGetRules()) {
+        r = symReplaceAllSafe(r, from, to);
       }
+
+      if (symUppercaseEl.checked) {
+        r = r.toUpperCase();
+      } else if (symCapitalizeEl.checked) {
+        r = symCapitalizeEachWord(r.toLowerCase());
+      }
+
+      symOutputEl.value = r;
     }
 
-    function clearSymbolConverter() {
-      document.getElementById('symbolInput').value = '';
-      document.getElementById('symbolOutput').value = '';
-      document.getElementById('uppercaseOutput').checked = false;
-      document.getElementById('capitalizeWords').checked = false;
-      document.getElementById('rulesBox').innerHTML = '';
-      document.getElementById('rulesBox').style.display = 'none';
-    }
+    symConvertBtn.addEventListener('click', symConvert);
+    symInputEl.addEventListener('input', symConvert);
+    symRulesEl.addEventListener('input', symConvert);
+    symUppercaseEl.addEventListener('change', symConvert);
+    symCapitalizeEl.addEventListener('change', symConvert);
+
+    symAddBtn.addEventListener('click', () => symAddRule('', '', true));
+
+    symClearBtn.addEventListener('click', () => {
+      symInputEl.value = '';
+      symOutputEl.value = '';
+      symUppercaseEl.checked = false;
+      symCapitalizeEl.checked = false;
+    });
+
+    symCopyBtn.addEventListener('click', () => {
+      symOutputEl.focus();
+      symOutputEl.select();
+      document.execCommand('copy');
+    });
 
     function countCharactersNoSpaces() {
       const text = document.getElementById('counterInput').value;
@@ -452,11 +417,8 @@ function convertSymbols() {
     }
 
     document.getElementById('gpsInput').addEventListener('input', formatGPS);
-    document.getElementById('symbolInput').addEventListener('input', convertSymbols);
     document.getElementById('orderInput').addEventListener('input', cleanOrder);
     document.getElementById('counterInput').addEventListener('input', countCharactersNoSpaces);
-    document.getElementById('uppercaseOutput').addEventListener('change', convertSymbols);
-    document.getElementById('capitalizeWords').addEventListener('change', convertSymbols);
   </script>
 </body>
 </html>
