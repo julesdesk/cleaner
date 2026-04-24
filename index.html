@@ -165,25 +165,7 @@
   <main class="wrap">
     <h1>Engraving Tools Dashboard</h1>
 
-    <section class="tool large">
-      <h2>Order Details Cleaner</h2>
-      <div class="grid">
-        <div>
-          <label for="orderInput">Input</label>
-          <textarea id="orderInput" placeholder=""></textarea>
-        </div>
-        <div>
-          <label for="orderOutput">Output</label>
-          <textarea id="orderOutput" placeholder=""></textarea>
-        </div>
-      </div>
-      <div class="buttons">
-        <button onclick="cleanOrder()">Clean Order</button>
-        <button class="secondary" onclick="copyText('orderOutput')">Copy</button>
-        <button class="secondary" onclick="clearFields('orderInput', 'orderOutput')">Clear</button>
-      </div>
-      <div class="note"></div>
-    </section>
+
 
     <section class="tool">
       <h2>GPS Coordinate Cleaner</h2>
@@ -235,6 +217,26 @@
       <div class="note"></div>
     </section>
 
+<section class="tool large">
+      <h2>Order Details Cleaner</h2>
+      <div class="grid">
+        <div>
+          <label for="orderInput">Input</label>
+          <textarea id="orderInput" placeholder=""></textarea>
+        </div>
+        <div>
+          <label for="orderOutput">Output</label>
+          <textarea id="orderOutput" placeholder=""></textarea>
+        </div>
+      </div>
+      <div class="buttons">
+        <button onclick="cleanOrder()">Clean Order</button>
+        <button class="secondary" onclick="copyText('orderOutput')">Copy</button>
+        <button class="secondary" onclick="clearFields('orderInput', 'orderOutput')">Clear</button>
+      </div>
+      <div class="note"></div>
+    </section>
+    
     <section class="tool">
       <h2>Character Counter</h2>
       <label for="counterInput">Input</label>
