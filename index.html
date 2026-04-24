@@ -171,11 +171,11 @@
       <h2>GPS Coordinate Cleaner N20°W20°</h2>
       <div class="grid">
         <div>
-          <label for="gpsInput">Input</label>
+          <label for="gpsInput"></label>
           <textarea id="gpsInput" placeholder=""></textarea>
         </div>
         <div>
-          <label for="gpsOutput">Output</label>
+          <label for="gpsOutput"></label>
           <textarea id="gpsOutput" placeholder=""></textarea>
         </div>
       </div>
@@ -191,28 +191,30 @@
       <h2>•♥†♥†•SYMBOLS•♥†♥†•</h2>
       <div class="grid">
         <div>
-          <label for="symbolInput">Input</label>
+          <label for="symbolInput"></label>
           <textarea id="symbolInput" placeholder=""></textarea>
         </div>
         <div>
-          <label for="symbolOutput">Output</label>
+          <label for="symbolOutput"></label>
           <textarea id="symbolOutput" placeholder=""></textarea>
         </div>
       </div>
 
       <div id="rulesBox"></div>
-
-      <div class="buttons">
-        <button onclick="addRule()">+ Add Rule</button>
-        <button onclick="convertSymbols()">Convert</button>
-        <button class="secondary" onclick="clearSymbolConverter()">Clear</button>
-        <button class="secondary" onclick="copyText('symbolOutput')">Copy</button>
-      </div>
-
-      <div class="checks">
+  <div class="checks">
         <label><input type="checkbox" id="uppercaseOutput" onchange="convertSymbols()" /> Uppercase</label>
         <label><input type="checkbox" id="capitalizeWords" onchange="convertSymbols()" /> Capitalize Words</label>
       </div>
+      
+      <div class="buttons">
+        <button class="secondary" onclick="copyText('symbolOutput')">Copy</button>
+        <button onclick="addRule()">+ Add Rule</button>
+        <button onclick="convertSymbols()">Convert</button>
+        <button class="secondary" onclick="clearSymbolConverter()">Clear</button>
+  
+      </div>
+
+    
 
       <div class="note"></div>
     </section>
