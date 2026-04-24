@@ -180,10 +180,11 @@
         </div>
       </div>
       <div class="buttons">
+        <button class="secondary" onclick="copyText('gpsOutput')">Copy</button>
         <button onclick="formatGPS()">Format</button>
         <button class="secondary" onclick="clearFields('gpsInput', 'gpsOutput')">Clear</button>
         <button class="secondary" onclick="addDotsToGPS()">Add dots (•)</button>
-        <button class="secondary" onclick="copyText('gpsOutput')">Copy</button>
+        
       </div>
     </section>
 
@@ -208,8 +209,8 @@
       
       <div class="buttons">
         <button class="secondary" onclick="copyText('symbolOutput')">Copy</button>
-        <button onclick="addRule()">+ Add Rule</button>
-        <button onclick="convertSymbols()">Convert</button>
+        <button onclick="convertSymbols()">Format</button>
+<button onclick="addRule()">+ Add Rule</button>
         <button class="secondary" onclick="clearSymbolConverter()">Clear</button>
   
       </div>
@@ -223,17 +224,17 @@
       <h2>Order Details Cleaner</h2>
       <div class="grid">
         <div>
-          <label for="orderInput">Input</label>
+          <label for="orderInput"></label>
           <textarea id="orderInput" placeholder=""></textarea>
         </div>
         <div>
-          <label for="orderOutput">Output</label>
+          <label for="orderOutput"></label>
           <textarea id="orderOutput" placeholder=""></textarea>
         </div>
       </div>
       <div class="buttons">
-        <button onclick="cleanOrder()">Clean Order</button>
         <button class="secondary" onclick="copyText('orderOutput')">Copy</button>
+        <button onclick="cleanOrder()">Format</button>
         <button class="secondary" onclick="clearFields('orderInput', 'orderOutput')">Clear</button>
       </div>
       <div class="note"></div>
