@@ -115,8 +115,6 @@
       font-size: 11px;
     }
 
-    button:hover { opacity: 0.9; }
-
     #rulesBox {
       display: none;
       margin-top: 6px;
@@ -148,11 +146,6 @@
       font-size: 24px;
       font-weight: bold;
       margin-top: 4px;
-    }
-
-    @media (max-width: 700px) {
-      body { padding: 10px; }
-      .rules-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -197,8 +190,8 @@
       <div id="rulesBox"></div>
 
       <div class="checks">
-        <label><input type="checkbox" id="uppercaseOutput" onchange="convertSymbols()" /> Uppercase</label>
-        <label><input type="checkbox" id="capitalizeWords" onchange="convertSymbols()" /> Capitalize Words</label>
+        <label><input type="checkbox" id="uppercaseOutput" /> Uppercase</label>
+        <label><input type="checkbox" id="capitalizeWords" /> Capitalize Words</label>
       </div>
 
       <div class="buttons">
@@ -231,7 +224,7 @@
     <section class="tool">
       <h2>Character Counter</h2>
       <label for="counterInput">Input</label>
-      <textarea id="counterInput" oninput="countCharactersNoSpaces()"></textarea>
+      <textarea id="counterInput"></textarea>
       <div class="counter-number" id="charCount">0</div>
       <div class="buttons">
         <button class="secondary" onclick="clearCounter()">Clear</button>
@@ -286,7 +279,7 @@
     }
 
     function formatGPS() {
-      let text = document.getElementById('gpsInput').value.trim();
+      let text = document.getElementById('gpsInput').value;
 
       text = text
         .replace(/\s+/g, ' ')
@@ -300,9 +293,8 @@
     }
 
     function addDotsToGPS() {
-      const output = document.getElementById('gpsOutput');
-      const source = output.value || document.getElementById('gpsInput').value;
-      output.value = source.trim().replace(/\s+/g, ' • ');
+      const source = document.getElementById('gpsOutput').value || document.getElementById('gpsInput').value;
+      document.getElementById('gpsOutput').value = source.trim().replace(/\s+/g, ' • ');
     }
 
     const defaultSymbolRules = [
@@ -314,13 +306,38 @@
       ['+', '†']
     ];
 
-    function showRules() {
-      document.getElementById('rulesBox').style.display = 'block';
+    function replaceAllText(text, find, replace) {
+      return text.split(find).join(replace);
+    }
+
+    function convertSymbols() {
+      let text = document.getElementById('symbolInput').value;
+
+      defaultSymbolRules.forEach(rule => {
+        text = replaceAllText(text, rule[0], rule[1]);
+      });
+
+      document.querySelectorAll('#rulesBox .rules-row').forEach(row => {
+        const find = row.querySelector('.findText').value;
+        const replace = row.querySelector('.replaceText').value;
+
+        if (find !== '') {
+          text = replaceAllText(text, find, replace);
+        }
+      });
+
+      if (document.getElementById('uppercaseOutput').checked) {
+        text = text.toUpperCase();
+      } else if (document.getElementById('capitalizeWords').checked) {
+        text = text.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+      }
+
+      document.getElementById('symbolOutput').value = text;
     }
 
     function addRule(findValue = '', replaceValue = '') {
       const rulesBox = document.getElementById('rulesBox');
-      showRules();
+      rulesBox.style.display = 'block';
 
       const row = document.createElement('div');
       row.className = 'rules-row';
@@ -347,46 +364,9 @@
       button.parentElement.remove();
       convertSymbols();
 
-      const rows = document.querySelectorAll('#rulesBox .rules-row');
-      if (rows.length === 0) {
+      if (document.querySelectorAll('#rulesBox .rules-row').length === 0) {
         document.getElementById('rulesBox').style.display = 'none';
       }
-    }
-
-    function escapeRegex(text) {
-      return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-
-    function replaceAllSafe(text, findStr, replaceStr) {
-      return text.replace(new RegExp(escapeRegex(findStr), 'g'), replaceStr);
-    }
-
-    function capitalizeEachWord(text) {
-      return text.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
-    }
-
-    function convertSymbols() {
-      let text = document.getElementById('symbolInput').value;
-
-      defaultSymbolRules.forEach(rule => {
-        text = replaceAllSafe(text, rule[0], rule[1]);
-      });
-
-      document.querySelectorAll('#rulesBox .rules-row').forEach(row => {
-        const find = row.querySelector('.findText').value;
-        const replace = row.querySelector('.replaceText').value;
-        if (find !== '') {
-          text = replaceAllSafe(text, find, replace);
-        }
-      });
-
-      if (document.getElementById('uppercaseOutput').checked) {
-        text = text.toUpperCase();
-      } else if (document.getElementById('capitalizeWords').checked) {
-        text = capitalizeEachWord(text);
-      }
-
-      document.getElementById('symbolOutput').value = text;
     }
 
     function clearSymbolConverter() {
@@ -398,8 +378,6 @@
       document.getElementById('rulesBox').style.display = 'none';
     }
 
-    document.getElementById('symbolInput').addEventListener('input', convertSymbols);
-
     function countCharactersNoSpaces() {
       const text = document.getElementById('counterInput').value;
       document.getElementById('charCount').textContent = text.replace(/\s/g, '').length;
@@ -409,6 +387,13 @@
       document.getElementById('counterInput').value = '';
       countCharactersNoSpaces();
     }
+
+    document.getElementById('gpsInput').addEventListener('input', formatGPS);
+    document.getElementById('symbolInput').addEventListener('input', convertSymbols);
+    document.getElementById('orderInput').addEventListener('input', cleanOrder);
+    document.getElementById('counterInput').addEventListener('input', countCharactersNoSpaces);
+    document.getElementById('uppercaseOutput').addEventListener('change', convertSymbols);
+    document.getElementById('capitalizeWords').addEventListener('change', convertSymbols);
   </script>
 </body>
 </html>
