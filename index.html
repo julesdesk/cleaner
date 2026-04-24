@@ -159,6 +159,7 @@
   <main class="wrap">
     <h1>Engraving Tools Dashboard</h1>
 
+    <!-- ORDER CLEANER -->
     <section class="tool large">
       <h2>Order Details Cleaner</h2>
       <div class="grid">
@@ -179,6 +180,7 @@
       <div class="note">Removes everything before the first colon. Empty fields are skipped.</div>
     </section>
 
+    <!-- GPS CLEANER -->
     <section class="tool">
       <h2>GPS Coordinate Cleaner</h2>
       <div class="grid">
@@ -199,6 +201,7 @@
       </div>
     </section>
 
+    <!-- SYMBOL CONVERTER -->
     <section class="tool">
       <h2>Symbol Converter</h2>
       <div class="grid">
@@ -225,9 +228,11 @@
         <label><input type="checkbox" id="uppercaseOutput" onchange="convertSymbols()" /> Uppercase</label>
         <label><input type="checkbox" id="capitalizeWords" onchange="convertSymbols()" /> Capitalize Words</label>
       </div>
-      <div class="note">Default rules run automatically. Click + Add Rule only when you need to edit or add rules.</div>
+
+      <div class="note">Default rules run automatically in the background. Click + Add Rule only if you need a custom rule.</div>
     </section>
 
+    <!-- CHARACTER COUNTER -->
     <section class="tool">
       <h2>Character Counter</h2>
       <label for="counterInput">Input</label>
@@ -241,6 +246,7 @@
   </main>
 
   <script>
+    // ---------- SHARED HELPERS ----------
     function copyText(id) {
       const box = document.getElementById(id);
       box.select();
@@ -253,6 +259,7 @@
       document.getElementById(outputId).value = '';
     }
 
+    // ---------- ORDER DETAILS CLEANER ----------
     function cleanOrder() {
       const input = document.getElementById('orderInput').value;
       const lines = input.split(/\r?\n/);
@@ -286,6 +293,7 @@
       document.getElementById('orderOutput').value = outputLines.join('\n');
     }
 
+    // ---------- GPS CLEANER ----------
     function formatGPS() {
       let text = document.getElementById('gpsInput').value.trim();
 
@@ -306,6 +314,7 @@
       output.value = source.trim().replace(/\s+/g, ' • ');
     }
 
+    // ---------- SYMBOL CONVERTER ----------
     const defaultSymbolRules = [
       ['//', '•'],
       ['/', ' '],
@@ -319,10 +328,9 @@
       document.getElementById('rulesBox').style.display = 'block';
     }
 
-    function addRule(findValue = '', replaceValue = '', show = true) {
+    function addRule(findValue = '', replaceValue = '') {
       const rulesBox = document.getElementById('rulesBox');
-
-      if (show) showRules();
+      showRules();
 
       const row = document.createElement('div');
       row.className = 'rules-row';
@@ -345,21 +353,11 @@
       convertSymbols();
     }
 
-    function loadDefaultSymbolRules() {
-      const rulesBox = document.getElementById('rulesBox');
-      rulesBox.innerHTML = '';
-
-      defaultSymbolRules.forEach(rule => addRule(rule[0], rule[1], false));
-
-      // Hide the default rules after loading.
-      rulesBox.style.display = 'none';
-    }
-
     function removeRule(button) {
       button.parentElement.remove();
       convertSymbols();
 
-      const rows = document.querySelectorAll('.rules-row');
+      const rows = document.querySelectorAll('#rulesBox .rules-row');
       if (rows.length === 0) {
         document.getElementById('rulesBox').style.display = 'none';
       }
@@ -380,7 +378,14 @@
 
     function convertSymbols() {
       let text = document.getElementById('symbolInput').value;
-      const rows = document.querySelectorAll('.rules-row');
+
+      // Hidden default rules run first
+      defaultSymbolRules.forEach(rule => {
+        text = replaceAllSafe(text, rule[0], rule[1]);
+      });
+
+      // Custom visible rules run second
+      const rows = document.querySelectorAll('#rulesBox .rules-row');
 
       rows.forEach(row => {
         const find = row.querySelector('.findText').value;
@@ -405,12 +410,13 @@
       document.getElementById('symbolOutput').value = '';
       document.getElementById('uppercaseOutput').checked = false;
       document.getElementById('capitalizeWords').checked = false;
-      loadDefaultSymbolRules();
+      document.getElementById('rulesBox').innerHTML = '';
+      document.getElementById('rulesBox').style.display = 'none';
     }
 
     document.getElementById('symbolInput').addEventListener('input', convertSymbols);
-    loadDefaultSymbolRules();
 
+    // ---------- CHARACTER COUNTER ----------
     function countCharactersNoSpaces() {
       const text = document.getElementById('counterInput').value;
       const count = text.replace(/\s/g, '').length;
