@@ -286,28 +286,61 @@
         .replace(/\s*°\s*/g, '° ')
         .replace(/\s*'\s*/g, "' ")
         .replace(/\s*"\s*/g, '" ')
-        .replace(/\s+([NSEW])/gi, ' $1')
+        .replace(/\s*([NSEW])\s*/gi, ' $1 ')
+        .replace(/\s+/g, ' ')
         .trim();
 
       document.getElementById('gpsOutput').value = text;
     }
 
     function addDotsToGPS() {
-      const source = document.getElementById('gpsOutput').value || document.getElementById('gpsInput').value;
-      document.getElementById('gpsOutput').value = source.trim().replace(/\s+/g, ' • ');
+      let source = document.getElementById('gpsOutput').value || document.getElementById('gpsInput').value;
+
+      source = source
+        .replace(/\s+/g, ' ')
+        .replace(/\s*°\s*/g, '° ')
+        .replace(/\s*'\s*/g, "' ")
+        .replace(/\s*"\s*/g, '" ')
+        .replace(/\s*([NSEW])\s*/gi, ' $1 ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      const parts = source.match(/[^NSEW]*[NSEW]/gi);
+
+      if (parts && parts.length) {
+        document.getElementById('gpsOutput').value = parts
+          .map(part => part.trim())
+          .join(' • ') + ' •';
+      } else {
+        document.getElementById('gpsOutput').value = source;
+      }
     }
 
     const defaultSymbolRules = [
-      ['//', '•'],
-      ['/', ' '],
-      ['-', '•'],
-      ['*', '•'],
+      ['//', ' • '],
+      [' . ', ' • '],
+      ['.', ' • '],
+      [' - ', ' • '],
+      ['-', ' • '],
+      ['*', ' • '],
       ['<3', '♥'],
-      ['+', '†']
+      ['+', '†'],
+      [' / ', ' '],
+      ['/', ' ']
     ];
 
     function replaceAllText(text, find, replace) {
       return text.split(find).join(replace);
+    }
+
+    function cleanSymbolSpacing(text) {
+      return text
+        .replace(/\s+/g, ' ')
+        .replace(/\s*•\s*/g, ' • ')
+        .replace(/\s*♥\s*/g, ' ♥ ')
+        .replace(/\s*†\s*/g, ' † ')
+        .replace(/\s+/g, ' ')
+        .trim();
     }
 
     function convertSymbols() {
@@ -325,6 +358,8 @@
           text = replaceAllText(text, find, replace);
         }
       });
+
+      text = cleanSymbolSpacing(text);
 
       if (document.getElementById('uppercaseOutput').checked) {
         text = text.toUpperCase();
