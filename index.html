@@ -157,13 +157,14 @@
     }
   </style>
 </head>
+
 <body>
   <main class="wrap">
     <h1>Engraving Tools Dashboard</h1>
 
     <!-- ORDER CLEANER -->
     <section class="tool large">
-      <h2>Order Cleaner</h2>
+      <h2>Order Details Cleaner</h2>
       <div class="grid">
         <div>
           <label for="orderInput">Input</label>
@@ -179,7 +180,7 @@
         <button class="secondary" onclick="copyText('orderOutput')">Copy</button>
         <button class="secondary" onclick="clearFields('orderInput', 'orderOutput')">Clear</button>
       </div>
-      <div class="note">Removes labels like Leather Color, Leather Color / Clasp Color, Leather Embossing, Front Engraving, Personalization, and Printed Gift Note.</div>
+      <div class="note">Removes everything before the first colon and keeps only the order details. Empty fields are skipped.</div>
     </section>
 
     <!-- GPS CLEANER -->
@@ -272,50 +273,53 @@
       return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    // ---------- ORDER CLEANER ----------
-    function getOrderValue(text, label) {
-      const regex = new RegExp('^' + escapeRegex(label) + '\\s*:\\s*(.*)$', 'im');
-      const match = text.match(regex);
-      return match ? match[1].trim() : '';
-    }
-
+    // ---------- ORDER DETAILS CLEANER ----------
     function cleanOrder() {
       const input = document.getElementById('orderInput').value;
+      const lines = input.split(/\r?\n/);
+      const outputLines = [];
+      let lastWasBlank = false;
 
-      const madeToOrder = /MADE TO ORDER\s*:/i.test(input) ? 'MADE TO ORDER:' : '';
+      for (const raw of lines) {
+        const line = raw.trim();
 
-      const leatherColor =
-        getOrderValue(input, 'Leather Color / Clasp Color') ||
-        getOrderValue(input, 'Leather Color');
+        // Keep one blank line between separate orders
+        if (!line) {
+          if (outputLines.length && !lastWasBlank) {
+            outputLines.push('');
+            lastWasBlank = true;
+          }
+          continue;
+        }
 
-      const leatherEmbossing = getOrderValue(input, 'Leather Embossing');
+        // Skip lines without a colon
+        if (!line.includes(':')) continue;
 
-      const engraving =
-        getOrderValue(input, 'Personalization') ||
-        getOrderValue(input, 'Front Engraving');
+        // Remove everything before the FIRST colon.
+        // Keeps details like Psalms 56:4 intact.
+        const value = line.split(':').slice(1).join(':').trim();
 
-      const giftNote = getOrderValue(input, 'Printed Gift Note');
+        // Skip empty fields like:
+        // Printed Gift Note Font:
+        // Printed Gift Note:
+        if (!value) continue;
 
-      let result = [];
-
-      if (madeToOrder) result.push(madeToOrder);
-      if (leatherColor) result.push(leatherColor);
-      if (leatherEmbossing) result.push('/ ' + leatherEmbossing);
-      if (engraving) result.push(engraving);
-
-      if (giftNote) {
-        result.push('');
-        result.push(giftNote);
+        outputLines.push(value);
+        lastWasBlank = false;
       }
 
-      document.getElementById('orderOutput').value = result.join('\n');
+      // Remove extra blank lines from the end
+      while (outputLines[outputLines.length - 1] === '') {
+        outputLines.pop();
+      }
+
+      document.getElementById('orderOutput').value = outputLines.join('\n');
     }
 
     // ---------- GPS CLEANER ----------
     function formatGPS() {
       let text = document.getElementById('gpsInput').value.trim();
 
-      // Cleans common pasted coordinate spacing without trying to overcomplicate the original format.
       text = text
         .replace(/\s+/g, ' ')
         .replace(/\s*°\s*/g, '° ')
@@ -348,6 +352,7 @@
 
     function removeRule(button) {
       const rows = document.querySelectorAll('.rules-row');
+
       if (rows.length > 1) {
         button.parentElement.remove();
       } else {
@@ -363,6 +368,7 @@
       rows.forEach(row => {
         const find = row.querySelector('.findText').value;
         const replace = row.querySelector('.replaceText').value;
+
         if (find !== '') {
           text = text.split(find).join(replace);
         }
